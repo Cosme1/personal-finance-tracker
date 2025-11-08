@@ -37,7 +37,6 @@ export const TransactionForm = ({ onAddTransaction }: TransactionFormProps) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <h3 className="text-2xl font-semibold">Add New Transaction</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Form fields go here */}
         <label className="flex flex-col">
           Type
           <select name="type" value={formState.type} onChange={handleChange} className="p-2 bg-gray-800 border border-gray-700 rounded-md mt-1">
