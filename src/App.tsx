@@ -1,13 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { Transaction } from './types/data';
-import { loadTransactions, saveTransactions } from './services/storageService';
+import { loadTransactions, saveTransactions, loadBudget, saveBudget } from './services/storageService';
 import { TransactionList } from './components/TransactionList';
 import { TransactionForm } from './components/TransactionForm';
 import { TransactionFilters } from './components/TransactionFilters';
+import { BudgetSettings } from './components/BudgetSettings';
+import { Dashboard } from './components/Dashboard';
 import './App.css';
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>(() => loadTransactions());
+  const [budget, setBudget] = useState<number>(() => loadBudget());
   const [searchQuery, setSearchQuery] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -16,6 +19,10 @@ function App() {
   useEffect(() => {
     saveTransactions(transactions);
   }, [transactions]);
+
+  useEffect(() => {
+    saveBudget(budget);
+  }, [budget]);
 
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
     const newTransaction = { ...transaction, id: crypto.randomUUID() };
@@ -46,11 +53,30 @@ function App() {
     });
   }, [transactions, searchQuery, categoryFilter, startDate, endDate]);
 
+  const currentMonthExpenses = useMemo(() => {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    return transactions
+      .filter(t => t.type === 'expense' && t.date.startsWith(currentMonth))
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions]);
+
   return (
-    <div className="max-w-2xl mx-auto p-4 md:p-8">
+    <div className="max-w-4xl mx-auto p-4 md:p-8">
       <h1 className="text-4xl font-bold text-center mb-8">
         Personal Finance Tracker
       </h1>
+
+      <div className="mb-8">
+        <BudgetSettings
+          budget={budget}
+          onBudgetChange={setBudget}
+          currentMonthExpenses={currentMonthExpenses}
+        />
+      </div>
+
+      <div className="mb-8">
+        <Dashboard transactions={transactions} />
+      </div>
 
       <TransactionForm onAddTransaction={addTransaction} />
 
