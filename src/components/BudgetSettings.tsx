@@ -62,7 +62,7 @@ export const BudgetSettings = ({ budget, onBudgetChange, currentMonthExpenses }:
           </div>
         ) : (
           <div className="flex justify-between items-center">
-            <div>
+            <div className="text-left">
               <p className="text-gray-400">Budget: <span className="text-white font-semibold">${budget.toFixed(2)}</span></p>
               <p className="text-gray-400">Spent: <span className="text-white font-semibold">${currentMonthExpenses.toFixed(2)}</span></p>
               <p className="text-gray-400">Remaining: <span className={`font-semibold ${isOverBudget ? 'text-red-400' : 'text-green-400'}`}>
